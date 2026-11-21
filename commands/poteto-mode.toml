@@ -2,7 +2,7 @@ description = "Run poteto-mode on the task typed after the command."
 prompt = """
 Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path. Follow the injected body.
 
-If pstack lite is on (the session says LITE MODE, settings pstack.lite is true, or this task follows /setup-pstack lite), do the work in this chat. Do not spawn poteto-agent or any other subagent. Do not run scripts/delegate.mjs. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. Prove the result by running that test or the real command.
+If pstack lite is on (the session says LITE MODE, settings pstack.lite is true, or this task follows /setup-pstack lite), do the work in this chat. Do not spawn poteto-agent or any other subagent. Do not run scripts/delegate.mjs. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. Prove the result by running that test or the real command. Batch reads with read_many_files. Use update_topic for status. Avoid bursts of tiny tool calls.
 
 If pstack lite is off, follow the injected poteto-mode skill, including its subagent rules.
 

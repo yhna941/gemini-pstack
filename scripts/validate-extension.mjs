@@ -293,7 +293,12 @@ function checkWriter() {
   }
   if (!liteSettings.skills.disabled.includes('architect')) fail('lite should hide nonessential skills');
   if (liteSettings.skills.disabled.includes('poteto-mode')) fail('lite should keep poteto-mode');
-  if (!liteSettings.tools.core.includes('read_file') || liteSettings.tools.core.includes('ask_user')) {
+  if (
+    !liteSettings.tools.core.includes('read_file') ||
+    !liteSettings.tools.core.includes('update_topic') ||
+    !liteSettings.tools.core.includes('write_todos') ||
+    liteSettings.tools.core.includes('ask_user')
+  ) {
     fail('lite tools.core should be the coding allowlist');
   }
   if (liteSettings.general.maxAttempts !== 2) fail('lite should cap model attempts');
@@ -316,6 +321,7 @@ function checkWriter() {
     fail('leaving lite should restore the skill catalog');
   }
   if (restoredSettings.tools) fail('leaving lite should restore the previous tool list');
+  if (restoredSettings.general) fail('leaving lite should not leave an empty general object');
 
   const brokenHome = fs.mkdtempSync(path.join(os.tmpdir(), 'pstack-models-'));
   const brokenDir = path.join(brokenHome, '.gemini');
