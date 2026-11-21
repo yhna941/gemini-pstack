@@ -1,0 +1,6 @@
+description = "Run the bug-fix playbook. Reproduce, then fix."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/bug-fix.md, and follow it. The defect is below. If it is empty, ask which defect to fix.
+
+{{args}}
+"""

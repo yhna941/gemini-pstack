@@ -1,0 +1,6 @@
+description = "Run the feature playbook from a named data shape."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/feature.md, and follow it. The change is below. If it is empty, ask what to build.
+
+{{args}}
+"""

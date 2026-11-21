@@ -1,0 +1,6 @@
+description = "Run poteto-mode on the task typed after the command."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. The adapter wins when a Cursor name and a Gemini name differ. Activate the poteto-mode skill and follow it for the task below. If the task is empty, ask what to do.
+
+{{args}}
+"""
