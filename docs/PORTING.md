@@ -47,31 +47,19 @@ Sources:
 | `/loop` | Cursor command the bug-fix playbook names | None | unsupported | Skip the step. |
 | cursor-team-kit | `/deslop`, `control-ui`, `control-cli` | Not part of pstack or this port | unsupported | Skip the step. |
 | Custom mode lock | Option-enter keeps `/poteto-mode` pinned | None | unsupported | Extension `GEMINI.md` is loaded while the extension is enabled. It does not pin the playbook. |
-| Worktree scripts | `skills/poteto-mode/scripts/` | Not copied | unsupported | The shipped playbooks do not call `watch-pr`. |
+| Worktree scripts | `skills/poteto-mode/scripts/` | Copied, including `watch-pr` | supported | Run them with `node` or the bundled `watch-pr` entry. |
 | Guide | `docs/guide/` | Not copied | unsupported | README plus this file. |
 
 ## Playbooks
 
 | Playbook | Status | Notes |
 | --- | --- | --- |
-| investigation | supported | Copied. Read-only. |
-| bug-fix | supported | Copied. Host names go through the adapter. |
-| feature | supported | Copied. Host names go through the adapter. |
+| Every upstream playbook | supported | Copied. Each one has a slash command. |
 | verification | degraded | Not an upstream file. Composed from the prove step in feature and bug-fix, `principle-prove-it-works`, `benchmark-checklist`, `blast-radius`, `create-verification-skill`, and `maintain-verification-skill`. |
-| opening-a-pr | supported | Copied because feature and bug-fix end on it. No slash command. |
-| perf-issue, hillclimb, runtime-forensics, trace-forensics, refactoring, prototype, visual-parity, authoring-a-skill, eval, babysit, shipping, autonomous-run, autopilot-full, autopilot-stack, session-pickup, pause-safely, multi-phase-plan, worktree-cleanup | unsupported | Not in this port. The skip line names the playbook. |
 
 ## Skills
 
-Copied, because a shipped playbook or `poteto-mode` reads them:
-
-`architect`, `arena`, `blast-radius`, `benchmark-checklist`, `create-verification-skill`, `figure-it-out`, `how`, `in-your-own-words`, `interrogate`, `maintain-verification-skill`, `no-comments`, `poteto-mode`, `setup-pstack`, `show-me-your-work`, `swarm`, `tdd`, `technical-writing`, `typescript-best-practices`, `unslop`, `why`, and every `principle-*` skill.
-
-`setup-pstack` is rewritten for Gemini CLI paths and aliases. `poteto-mode` keeps the upstream rules and replaces the playbook index with the five files this port ships. `playbooks/verification.md` is new.
-
-Not copied:
-
-`automate-me`, `bro`, `correct`, `create-formal-verification-skill`, `ketchup`, `ketchup-video`, `maintain-formal-verification-skill`, `make-bot-ui`, `poteto-help`, `recall`, `reflect`, `sharpen`, `statechart`, `teach`.
+Every upstream skill directory is copied. `setup-pstack` is rewritten for Gemini CLI paths and aliases. `poteto-mode` keeps the upstream rules and adds a Gemini CLI preamble. `playbooks/verification.md` is new. `scripts/generate-commands.mjs` writes a slash command for each skill and playbook.
 
 ## Adapter shape
 

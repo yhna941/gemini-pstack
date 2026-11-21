@@ -108,6 +108,16 @@ function checkCommands() {
   for (const name of expected) {
     if (!files.includes(name)) fail(`missing commands/${name}`);
   }
+  const skillNames = fs.readdirSync(path.join(root, 'skills'));
+  for (const name of skillNames) {
+    if (!files.includes(`${name}.toml`)) fail(`missing commands/${name}.toml for skill ${name}`);
+  }
+  const playbooks = fs.readdirSync(path.join(root, 'skills/poteto-mode/playbooks'));
+  for (const name of playbooks) {
+    if (!name.endsWith('.md')) continue;
+    const stem = name.slice(0, -3);
+    if (!files.includes(`${stem}.toml`)) fail(`missing commands/${stem}.toml for playbook ${name}`);
+  }
   for (const name of files) {
     if (!/^[a-z0-9-]+\.toml$/.test(name)) fail(`command file name ${name} is not a slash-command slug`);
     parseCommandToml(read(path.join('commands', name)), `commands/${name}`);
@@ -135,11 +145,29 @@ function checkSkills() {
     if (!description) fail(`skills/${dir} is missing description`);
   }
   const playbooks = [
-    'investigation.md',
+    'authoring-a-skill.md',
+    'autonomous-run.md',
+    'autopilot-full.md',
+    'autopilot-stack.md',
+    'babysit.md',
     'bug-fix.md',
+    'eval.md',
     'feature.md',
-    'verification.md',
+    'hillclimb.md',
+    'investigation.md',
+    'multi-phase-plan.md',
     'opening-a-pr.md',
+    'pause-safely.md',
+    'perf-issue.md',
+    'prototype.md',
+    'refactoring.md',
+    'runtime-forensics.md',
+    'session-pickup.md',
+    'shipping.md',
+    'trace-forensics.md',
+    'verification.md',
+    'visual-parity.md',
+    'worktree-cleanup.md',
   ];
   for (const name of playbooks) {
     const file = path.join(root, 'skills/poteto-mode/playbooks', name);

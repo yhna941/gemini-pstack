@@ -72,10 +72,10 @@ Follow `skills/setup-pstack/SKILL.md`. The script `scripts/write-pstack-models.m
 | `/deslop`, `control-ui`, and `control-cli` from cursor-team-kit | Skip with the line. Those skills are not in this extension. |
 | `/loop` | Skip with the line. |
 | `disable-model-invocation` | Gemini CLI ignores this field. The skill `description` is what decides activation. |
-| An unported playbook | Skip with the line `Skipped in Gemini CLI: <playbook>. Not in this port.` Do not invent the file. |
+| A playbook file that is not in `skills/poteto-mode/playbooks/` | Skip with the line. Do not invent the file. |
 
 ## Playbooks in this port
 
-`investigation`, `bug-fix`, `feature`, `verification`, and `opening-a-pr`.
+Every upstream playbook is in `skills/poteto-mode/playbooks/`, plus `verification`.
 
 `verification` is not an upstream playbook. It is the prove step from feature and bug-fix, written so `/verification` has a file to open. The upstream text it follows is `principle-prove-it-works`, `benchmark-checklist`, `blast-radius`, `create-verification-skill`, and `maintain-verification-skill`.

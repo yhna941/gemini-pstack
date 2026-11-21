@@ -60,9 +60,9 @@ A new session loads the role table because Gemini CLI reads `~/.gemini/GEMINI.md
 
 Commands: `/poteto-mode`, `/setup-pstack`, `/investigation`, `/bug-fix`, `/feature`, `/verification`.
 
-Playbooks: investigation, bug-fix, feature, verification, and opening-a-pr. Verification is not an upstream playbook. It is the prove step, written out so the command has a file to open.
+Playbooks: every upstream playbook, plus verification. Verification is not an upstream playbook. It is the prove step, written out so the command has a file to open.
 
-Skills those playbooks read, including the principle skills, architect, arena, swarm, interrogate, and the verification skills. The list is in [docs/PORTING.md](docs/PORTING.md).
+Skills: every upstream skill. `setup-pstack` is the Gemini CLI rewrite. The inventory is in [docs/PORTING.md](docs/PORTING.md).
 
 Agents: `poteto-agent` and `comment-sicko`.
 
@@ -74,7 +74,7 @@ Subagents exist, and they cannot call other subagents. A nested spawn becomes wo
 
 Bugbot, Cursor Automations, cloud agents, `.mdc` rules, and `/loop` are not available. The adapter says to skip those steps.
 
-The other upstream playbooks, the guide, and the `watch-pr` scripts are not in this port.
+`watch-pr` is copied under `skills/poteto-mode/scripts/`. The guide is still absent from this branch. Bugbot, Cursor Automations, and a real multi-vendor panel still need the equivalents in the follow-up PRs.
 
 ## License
 

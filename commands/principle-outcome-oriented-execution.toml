@@ -1,0 +1,6 @@
+description = "Run the principle-outcome-oriented-execution skill."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. The adapter wins when a Cursor name and a Gemini name differ. Activate the principle-outcome-oriented-execution skill and follow it. The task is below. If it is empty, ask what to do.
+
+{{args}}
+"""
