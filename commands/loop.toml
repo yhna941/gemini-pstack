@@ -1,0 +1,6 @@
+description = "Repeat a prompt with scripts/loop.mjs."
+prompt = """
+Read docs/harness/gemini-cli.md once this session. Run node scripts/loop.mjs --times 2 --dry-run -- for the task below. Run it without --dry-run only when GEMINI_API_KEY is set.
+
+{{args}}
+"""

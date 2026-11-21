@@ -1,0 +1,6 @@
+description = "Review the current diff with the bugbot triage rubric."
+prompt = """
+Read docs/harness/gemini-cli.md once this session. Read skills/poteto-mode/references/bugbot-triage.md. Run node scripts/review-pr.mjs --dry-run, then run it without --dry-run when GEMINI_API_KEY is set. Extra notes are below.
+
+{{args}}
+"""

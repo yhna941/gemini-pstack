@@ -29,26 +29,36 @@ Sources:
 | Slash commands | Skill invocation from `/` | `commands/<name>.toml` with a required `prompt` string | supported | `{{args}}` is the task text. |
 | Skills | `skills/<name>/SKILL.md` | Extension `skills/<name>/SKILL.md`, activated on demand | supported | Copied skills are listed below. |
 | `disable-model-invocation` | Cursor hides the skill until you invoke it | The loader ignores unknown frontmatter keys | unsupported | The `description` text is the only trigger. |
-| Subagents | `Task` with `subagent_type` | Extension `agents/*.md`, plus built-ins such as `generalist` | degraded | Subagents are marked preview. They cannot call other subagents. Nested work runs in the current agent and writes the skip line. |
+| Subagents | `Task` with `subagent_type` | Extension `agents/*.md`, plus `scripts/delegate.mjs` | degraded | Subagents are preview and cannot call other subagents. Nested work is a separate `gemini -p` process. |
 | `poteto-agent` | Cursor agent file, model `claude-opus-5-5-xhigh-fast`, `is_background: true` | `agents/poteto-agent.md` | degraded | `is_background` is not in the strict schema, so it is dropped. `model` is omitted so `settings.json` can set it. |
 | `comment-sicko` | Cursor agent | `agents/comment-sicko.md`, copied | supported | `no-comments` calls this agent. |
 | `generalPurpose` | Task subagent type | Built-in `generalist` | degraded | No extra tools beyond the session. |
-| Multi-model review panel | Arena and interrogate spawn Fable, Opus, and Gemini seats | One vendor | degraded | The panel is one `pro` pass. A second alias on the role line is a later pass. The cross-vendor judge is skipped. |
+| Multi-model review panel | Arena and interrogate spawn Fable, Opus, and Gemini seats | `scripts/panel.mjs` runs `pro`, then `flash` | degraded | Both seats are Gemini. A Claude or Fable seat is impossible from this CLI. |
 | Model ids | Claude, Fable, and Gemini slugs, plus an effort token | Aliases `pro`, `flash`, `flash-lite`, `auto` | degraded | `large` is `pro` for judgment and `flash` for swarm workers. `medium` lowers one step. `small` lowers two. Nothing is written above `pro`. |
 | Role rule file | `~/.cursor/rules/pstack-models.mdc` with `alwaysApply: true` | Markers in `~/.gemini/GEMINI.md`, which Gemini CLI loads as global context | degraded | `.mdc` is not read. The block is the role table. `model.name` and `agents.overrides.poteto-agent.modelConfig.model` in `~/.gemini/settings.json` are the keys the CLI enforces. |
-| `AskQuestion` | Structured question tool | None | unsupported | Ask in the reply. `/setup-pstack` with no budget writes `large`. |
+| `AskQuestion` | Structured question tool | `/ask` | degraded | There is no question widget. `/ask` puts the question in the reply. `/setup-pstack` with no budget writes `large`. |
 | Todo list tool | TodoWrite | Not part of the extension format | degraded | Use a todo tool if the session has one. Otherwise keep the list in the reply. |
-| Bugbot | Cursor review bot | None | unsupported | Do not start, wait for, or configure Bugbot. Comments already on the PR are ordinary review threads. Classify them with `skills/poteto-mode/references/bugbot-triage.md`. |
-| Automations | `automations/benny` | None | unsupported | Skip the step. Benny is not in this port. |
-| Hooks | Not a pstack surface | Gemini CLI `hooks/hooks.json` | unsupported | This port ships no hooks. |
+| Bugbot | Cursor review bot | `.github/workflows/review.yml` and `scripts/review-pr.mjs` | degraded | Cursor Bugbot is not started. The workflow calls Gemini when `GEMINI_API_KEY` is set, and exits 0 when it is not. Classify threads with `skills/poteto-mode/references/bugbot-triage.md`. |
+| Automations | `automations/benny` | Copied procedures plus `.github/workflows/benny.yml` | degraded | There is no Slack wake and no Cursor Automations API. `workflow_dispatch` runs the prompt through `scripts/delegate.mjs`. |
+| Hooks | Not a pstack surface | `hooks/hooks.json` `SessionStart` and `BeforeAgent` | supported | The hook points at the adapter, `scripts/delegate.mjs`, and `scripts/panel.mjs`. |
 | MCP servers | Not required by the shipped playbooks | `mcpServers` in the manifest | unsupported | This port ships no MCP server. |
-| Cloud agents | `environment: "cloud"` | None | unsupported | Use a local git worktree. Skip dashboard status. |
+| Cloud agents | `environment: "cloud"` | Local git worktree plus `scripts/delegate.mjs` | degraded | The Cursor cloud dashboard is not available. |
 | Pull request tool | Cursor or Origin PR tool | None built into the extension | degraded | `gh pr create` with no `--draft`. |
-| `/loop` | Cursor command the bug-fix playbook names | None | unsupported | Skip the step. |
+| `/loop` | Cursor command the bug-fix playbook names | `scripts/loop.mjs` and `/loop` | degraded | It repeats `gemini -m pro -p`. It is not Cursor's `/loop` scheduler. |
 | cursor-team-kit | `/deslop`, `control-ui`, `control-cli` | Not part of pstack or this port | unsupported | Skip the step. |
-| Custom mode lock | Option-enter keeps `/poteto-mode` pinned | None | unsupported | Extension `GEMINI.md` is loaded while the extension is enabled. It does not pin the playbook. |
+| Custom mode lock | Option-enter keeps `/poteto-mode` pinned | `BeforeAgent` hook plus `GEMINI.md` | degraded | The hook adds adapter context every turn. It does not pin a mode the way Option-enter does. |
 | Worktree scripts | `skills/poteto-mode/scripts/` | Copied, including `watch-pr` | supported | Run them with `node` or the bundled `watch-pr` entry. |
 | Guide | `docs/guide/` | Not copied | unsupported | README plus this file. |
+
+## Still impossible
+
+Gemini CLI cannot call Claude or Fable. `scripts/panel.mjs` is two Gemini passes.
+
+A subagent cannot call another subagent. `scripts/delegate.mjs` is a new process and does not share the parent tool session.
+
+Cursor Automations, Slack wakes, and the Bugbot product are not in Gemini CLI. The workflows skip cleanly when `GEMINI_API_KEY` is unset.
+
+There is no structured question widget.
 
 ## Playbooks
 
@@ -67,10 +77,10 @@ Two shapes were possible.
 
 The shipped shape is one adapter file plus upstream skill text. Callers keep one way to read a skill. Host paths live in the adapter and in `setup-pstack`. This matches the Claude Code port.
 
-The rejected shape was rewriting every skill so it speaks Gemini names only. That makes a Cursor name unreadable in the skill, and every upstream edit becomes a manual merge. It does not remove the need for a table. Gemini CLI still cannot do the panel, Bugbot, or automations.
+The rejected shape was rewriting every skill so it speaks Gemini names only. That makes a Cursor name unreadable in the skill, and every upstream edit becomes a manual merge. It does not remove the need for a table. The panel, Bugbot, and automations on this branch are Gemini stand-ins. They are not the Cursor products.
 
 ## Next
 
-1. Port the remaining playbooks, still through the adapter, starting with refactoring, babysit, and shipping.
-2. Add a real second model only if Gemini CLI grows a way to call a non-Gemini model. Until then, do not pretend `flash` is another vendor.
+1. Land the guide and `scripts/sync-upstream.mjs`.
+2. Add a real second vendor only if Gemini CLI grows a way to call a non-Gemini model. Until then, do not pretend `flash` is another vendor.
 3. Re-check `TomlCommandDefSchema` and the local agent schema when `@google/gemini-cli` moves past 0.70.0. `scripts/validate-extension.mjs` encodes the checks this port depends on.
