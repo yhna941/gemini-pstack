@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-const BUDGETS = new Set(['large', 'medium', 'small']);
+const BUDGETS = new Set(['large', 'medium', 'small', 'lite']);
+const LITE_MODEL = 'gemini-3.5-flash-lite';
 const LADDER = ['pro', 'flash', 'flash-lite'];
 const STEPS = { large: 0, medium: 1, small: 2 };
 const PARENT = { large: 'pro', medium: 'flash', small: 'flash-lite' };
@@ -28,6 +29,20 @@ function lower(alias, steps) {
 }
 
 function roleBlock(budget) {
+  if (budget === 'lite') {
+    const lines = ROLES.map(([role]) => `${role}: ${LITE_MODEL}`);
+    return [
+      '# pstack model configuration. One line per role. Delete a line to fall back to the skill default.',
+      '# `inherit` omits the subagent model field so the role uses the parent model.',
+      '# `auto`, `pro`, `flash`, and `flash-lite` are Gemini CLI aliases.',
+      '# Gemini CLI has one vendor. A panel line with one alias is one pass.',
+      '# lite keeps the parent chat on one model and does not spawn subagents.',
+      '# defaults: 3',
+      `# budget: lite (${LITE_MODEL})`,
+      ...lines,
+      '',
+    ].join('\n');
+  }
   const steps = STEPS[budget];
   const lines = ROLES.map(([role, alias]) => `${role}: ${lower(alias, steps)}`);
   return [
@@ -119,7 +134,11 @@ function writeAll(home, budget) {
   const settingsPath = path.join(geminiDir, 'settings.json');
   const settings = loadSettings(settingsPath);
   const model = objectOrEmpty(settings.model, `${settingsPath} model`);
-  if (model.name === undefined) model.name = PARENT[budget];
+  const pstack = objectOrEmpty(settings.pstack, `${settingsPath} pstack`);
+  pstack.lite = budget === 'lite';
+  settings.pstack = pstack;
+  if (budget === 'lite') model.name = LITE_MODEL;
+  else if (model.name === undefined) model.name = PARENT[budget];
   const agents = objectOrEmpty(settings.agents, `${settingsPath} agents`);
   const overrides = objectOrEmpty(
     agents.overrides,
@@ -133,7 +152,7 @@ function writeAll(home, budget) {
     previous.modelConfig,
     `${settingsPath} agents.overrides.poteto-agent.modelConfig`,
   );
-  modelConfig.model = lower('pro', STEPS[budget]);
+  modelConfig.model = budget === 'lite' ? LITE_MODEL : lower('pro', STEPS[budget]);
   previous.modelConfig = modelConfig;
   overrides['poteto-agent'] = previous;
   agents.overrides = overrides;
@@ -156,12 +175,12 @@ function main() {
   }
   if (args.help || !args.budget) {
     console.error(
-      'Usage: node scripts/write-pstack-models.mjs --budget <large|medium|small>',
+      'Usage: node scripts/write-pstack-models.mjs --budget <large|medium|small|lite>',
     );
     process.exit(args.help ? 0 : 1);
   }
   if (!BUDGETS.has(args.budget)) {
-    console.error(`Unknown budget ${args.budget}. Use large, medium, or small.`);
+    console.error(`Unknown budget ${args.budget}. Use large, medium, small, or lite.`);
     process.exit(1);
   }
   try {

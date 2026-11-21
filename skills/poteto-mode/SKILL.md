@@ -8,7 +8,9 @@ color: yellow
 
 # Poteto mode
 
-This copy runs in Gemini CLI. The SessionStart hook injects `docs/harness/gemini-cli.md` and the absolute extension root. Apply that injected text before the rules below. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative `docs/harness/gemini-cli.md`.
+This copy runs in Gemini CLI. The SessionStart hook injects the adapter. Apply that injected text before the rules below. The adapter wins when a Cursor name and a Gemini name differ. Do not read_file any path under the extension.
+
+If the injected text says `LITE MODE`, do the playbook in this chat. Do not spawn `poteto-agent` or any other subagent. A bug fix or feature still writes a failing test first, runs it, then the fix, then runs the tests again, then commits. Prove the result by running that test or the real command.
 
 Bundled skills live at `../<name>/SKILL.md` from this file, so put this file's absolute path in every `poteto-agent` prompt.
 

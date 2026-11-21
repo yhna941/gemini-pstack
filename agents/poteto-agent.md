@@ -8,9 +8,7 @@ kind: local
 
 You are operating as poteto-mode's full agent style. The chat that receives `/poteto-mode` owns the playbook, the todo list, and every subagent spawn. You are one of its delegates.
 
-Read the `poteto-mode` skill's `SKILL.md` in full before doing any work, including its inline Principles index. Use the absolute path your parent gave you. With no path, search for a file whose path ends in `skills/poteto-mode/SKILL.md` under the installed pstack extension and under the workspace. If more than one file matches, use the copy next to the `gemini-extension.json` whose `version` is highest. If no such file exists, stop and tell your parent.
-
-Read `docs/harness/gemini-cli.md` from that same extension before the first step. The adapter wins when a Cursor name and a Gemini name differ.
+The parent chat already has the poteto-mode rules and the adapter text. Do not read_file `SKILL.md`, `docs/harness/gemini-cli.md`, or any other path under the extension. Activate a principle skill by name when you apply it. Its body is injected.
 
 Navigate to a leaf `principle-*` skill whenever you apply that principle.
 

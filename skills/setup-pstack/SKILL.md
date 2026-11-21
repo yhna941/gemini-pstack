@@ -12,7 +12,7 @@ Write pstack's per-role models into the two files Gemini CLI reads.
 
 The only writer is `<pstack>/scripts/write-pstack-models.mjs`. `<pstack>` is the directory that contains `gemini-extension.json`. Do not hand-edit those keys in the same turn.
 
-Read `docs/harness/gemini-cli.md` once before the steps below.
+The adapter text is already in the session. Do not read_file it.
 
 ## Steps
 
@@ -30,11 +30,12 @@ Leave `model.name` alone when it is already set. The script does that. Set it on
 
 ### 3. Budget
 
-Look at the user's words for `large`, `medium`, or `small`.
+Look at the user's words for `large`, `medium`, `small`, or `lite`.
 
 - `large` keeps `pro` for code, prose, and judgment, and `flash` for swarm workers.
 - `medium` lowers one step. `pro` becomes `flash`. `flash` becomes `flash-lite`.
 - `small` lowers two steps. Both land on `flash-lite`.
+- `lite` writes `gemini-3.5-flash-lite` for every role and for `model.name`. It sets `pstack.lite` to true. The session then stays in one chat, skips subagents, and still requires a failing test first, a rerun, and a commit.
 
 The ladder is `pro`, then `flash`, then `flash-lite`. No role is written above `pro`.
 
@@ -47,7 +48,7 @@ A panel line ships as one alias. Gemini CLI has one vendor, so the upstream thre
 Run:
 
 ```bash
-node <pstack>/scripts/write-pstack-models.mjs --budget <large|medium|small>
+node <pstack>/scripts/write-pstack-models.mjs --budget <large|medium|small|lite>
 ```
 
 If `~/.gemini/settings.json` exists and is not a JSON object, stop. The script exits non-zero and writes nothing in that case. Tell the user the parse error. Do not delete the file.
