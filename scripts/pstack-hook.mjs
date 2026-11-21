@@ -46,6 +46,7 @@ export function contextBlock(lite = liteEnabled()) {
       ...paths,
       'Do this work in the current chat. Do not spawn poteto-agent, generalist, comment-sicko, or any other subagent. Do not run scripts/delegate.mjs.',
       'A bug fix or feature still writes a failing test first, runs it, then the fix, then runs the tests again, then commits. Prove the result by running the test or the real command. A compile is not the proof.',
+      'Batch reads with read_many_files. Use update_topic for status. Avoid bursts of tiny tool calls. Free tier input is 250000 tokens per minute and there is no throttle, so leave a gap between heavy turns.',
       `Model default for this mode is gemini-3.5-flash-lite. Free tier input limit is 250000 tokens per minute.`,
     ].join('\n');
   }

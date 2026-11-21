@@ -56,20 +56,63 @@ export function plan(models, prompt) {
   }));
 }
 
-export function runPlans(plans, dryRun) {
+export function paceMs(argv = process.argv, env = process.env) {
+  const flagged = flagValue(argv, '--pace');
+  if (flagged) return Number(flagged);
+  if (typeof env.PSTACK_MIN_INTERVAL_MS === 'string' && env.PSTACK_MIN_INTERVAL_MS.trim()) {
+    return Number(env.PSTACK_MIN_INTERVAL_MS);
+  }
+  return 0;
+}
+
+export function retryWaitMs(text) {
+  if (!text) return 0;
+  const match = text.match(/retryDelay["']?\s*[:=]\s*"?(\d+(?:\.\d+)?)(ms|s)?"?/i);
+  if (match) {
+    const value = Number(match[1]);
+    if (match[2] === 'ms') return Math.ceil(value);
+    if (match[2] === 's' || value < 1000) return Math.ceil(value * 1000);
+    return Math.ceil(value);
+  }
+  if (/429|RESOURCE_EXHAUSTED|quota/i.test(text)) return 60000;
+  return 0;
+}
+
+function sleepMs(ms) {
+  if (ms <= 0) return;
+  spawnSync('sleep', [(ms / 1000).toFixed(3)]);
+}
+
+export function runPlans(plans, dryRun, intervalMs = 0) {
   if (dryRun) {
     for (const step of plans) {
       console.log(`${step.command} ${step.args.slice(0, -1).join(' ')} <prompt>`);
     }
+    if (intervalMs > 0) console.log(`pace ${intervalMs}ms`);
     return 0;
   }
   if (!process.env.GEMINI_API_KEY) {
     console.error('Skipped: GEMINI_API_KEY is not set.');
     return 0;
   }
-  for (const step of plans) {
-    const result = spawnSync(step.command, step.args, { stdio: 'inherit' });
-    if (result.status !== 0) return result.status ?? 1;
+  for (let index = 0; index < plans.length; index += 1) {
+    if (index > 0) sleepMs(intervalMs);
+    const step = plans[index];
+    let attempt = 0;
+    while (true) {
+      const result = spawnSync(step.command, step.args, { encoding: 'utf8' });
+      if (result.stdout) process.stdout.write(result.stdout);
+      if (result.stderr) process.stderr.write(result.stderr);
+      if ((result.status ?? 1) === 0) break;
+      const wait = retryWaitMs(`${result.stderr || ''}\n${result.stdout || ''}`);
+      if (wait > 0 && attempt < 2) {
+        attempt += 1;
+        console.error(`Rate limited. Waiting ${wait}ms before retry ${attempt}.`);
+        sleepMs(wait);
+        continue;
+      }
+      return result.status ?? 1;
+    }
   }
   return 0;
 }
@@ -142,6 +185,26 @@ export function selfTestResolve() {
   const custom = panelModels('gemini-2.5-flash');
   if (custom[0] !== 'gemini-2.5-flash' || custom[1] !== 'gemini-2.5-flash') {
     console.error('a concrete model should be used for both panel seats');
+    process.exit(1);
+  }
+  if (paceMs(['node', 'loop.mjs', '--pace', '1500'], { PSTACK_MIN_INTERVAL_MS: '50' }) !== 1500) {
+    console.error('--pace should beat PSTACK_MIN_INTERVAL_MS');
+    process.exit(1);
+  }
+  if (paceMs(['node', 'loop.mjs'], { PSTACK_MIN_INTERVAL_MS: '2000' }) !== 2000) {
+    console.error('PSTACK_MIN_INTERVAL_MS should set the interval');
+    process.exit(1);
+  }
+  if (retryWaitMs('RESOURCE_EXHAUSTED retryDelay: "47s"') !== 47000) {
+    console.error('retryDelay seconds should become milliseconds');
+    process.exit(1);
+  }
+  if (retryWaitMs('HTTP 429') !== 60000) {
+    console.error('a 429 without retryDelay should wait 60s');
+    process.exit(1);
+  }
+  if (retryWaitMs('ok') !== 0) {
+    console.error('a normal response should not wait');
     process.exit(1);
   }
   console.log('model resolution self-test passed');

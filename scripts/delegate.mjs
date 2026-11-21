@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {
+  paceMs,
   plan,
   readPrompt,
   resolveModel,
@@ -18,5 +19,7 @@ if (process.argv.includes('--self-test')) {
     console.error('Usage: node scripts/delegate.mjs [--model <name>] [--dry-run] -- <prompt>');
     process.exit(1);
   }
-  process.exit(runPlans(plan([model], prompt), process.argv.includes('--dry-run')));
+  process.exit(
+    runPlans(plan([model], prompt), process.argv.includes('--dry-run'), paceMs(process.argv)),
+  );
 }

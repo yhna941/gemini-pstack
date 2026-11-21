@@ -22,6 +22,8 @@ export const LITE_TOOLS = [
   'replace',
   'run_shell_command',
   'activate_skill',
+  'update_topic',
+  'write_todos',
 ];
 
 function skillNames() {
@@ -157,10 +159,9 @@ function loadSettings(file) {
 function applyLite(settings) {
   if (!settings.pstack.liteBackup) {
     settings.pstack.liteBackup = {
-      skillsDisabled: Array.isArray(settings.skills?.disabled) ? [...settings.skills.disabled] : [],
+      skills: settings.skills === undefined ? null : structuredClone(settings.skills),
       tools: settings.tools === undefined ? null : structuredClone(settings.tools),
-      maxAttempts: settings.general?.maxAttempts ?? null,
-      modelRouting: settings.general?.plan?.modelRouting ?? null,
+      general: settings.general === undefined ? null : structuredClone(settings.general),
       modelName: settings.model?.name ?? null,
     };
   }
@@ -179,25 +180,30 @@ function applyLite(settings) {
   settings.general = general;
 }
 
+function restoreOrDelete(settings, key, value) {
+  if (value === null || value === undefined) delete settings[key];
+  else settings[key] = value;
+}
+
 function revertLite(settings) {
   const backup = settings.pstack.liteBackup;
   if (!backup) return;
-  const skills = objectOrEmpty(settings.skills, 'skills');
-  skills.disabled = backup.skillsDisabled;
-  settings.skills = skills;
-  if (backup.tools === null) delete settings.tools;
-  else settings.tools = backup.tools;
-  const general = objectOrEmpty(settings.general, 'general');
-  if (backup.maxAttempts === null) delete general.maxAttempts;
-  else general.maxAttempts = backup.maxAttempts;
-  const plan = objectOrEmpty(general.plan, 'general.plan');
-  if (backup.modelRouting === null) delete plan.modelRouting;
-  else plan.modelRouting = backup.modelRouting;
-  general.plan = plan;
-  settings.general = general;
+  restoreOrDelete(settings, 'skills', backup.skills);
+  restoreOrDelete(settings, 'tools', backup.tools);
+  restoreOrDelete(settings, 'general', backup.general);
   if (backup.modelName === null) delete settings.model.name;
   else settings.model.name = backup.modelName;
   delete settings.pstack.liteBackup;
+}
+
+export function roundTripLite(settings) {
+  const copy = structuredClone(settings);
+  copy.model = copy.model && typeof copy.model === 'object' ? copy.model : {};
+  copy.pstack = copy.pstack && typeof copy.pstack === 'object' ? copy.pstack : {};
+  const before = structuredClone(copy);
+  applyLite(copy);
+  revertLite(copy);
+  return { before, after: copy };
 }
 
 function writeAll(home, budget) {
@@ -270,6 +276,23 @@ function main() {
   }
 }
 
+function selfTestRoundTrip() {
+  const sample = { ui: { theme: 'dark' } };
+  const { before, after } = roundTripLite(sample);
+  if (JSON.stringify(before) !== JSON.stringify(after)) {
+    console.error('lite revert did not match the settings from before lite');
+    console.error(JSON.stringify(before));
+    console.error(JSON.stringify(after));
+    process.exit(1);
+  }
+  if (after.general || after.tools || after.skills) {
+    console.error('lite revert left keys that were absent before lite');
+    process.exit(1);
+  }
+  console.log('lite settings round-trip self-test passed');
+}
+
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
-  main();
+  if (process.argv.includes('--self-test')) selfTestRoundTrip();
+  else main();
 }

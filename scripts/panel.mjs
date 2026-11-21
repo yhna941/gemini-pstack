@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {
+  paceMs,
   panelModels,
   plan,
   readPrompt,
@@ -19,5 +20,7 @@ if (process.argv.includes('--self-test')) {
     process.exit(1);
   }
   const seats = panelModels(resolveModel(process.argv));
-  process.exit(runPlans(plan(seats, prompt), process.argv.includes('--dry-run')));
+  process.exit(
+    runPlans(plan(seats, prompt), process.argv.includes('--dry-run'), paceMs(process.argv)),
+  );
 }

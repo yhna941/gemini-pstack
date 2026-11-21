@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {
+  paceMs,
   plan,
   readPrompt,
   resolveModel,
@@ -38,6 +39,7 @@ if (process.argv.includes('--self-test')) {
     runPlans(
       plan(Array.from({ length: count }, () => model), prompt),
       process.argv.includes('--dry-run'),
+      paceMs(process.argv),
     ),
   );
 }
