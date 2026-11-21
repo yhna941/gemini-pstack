@@ -65,13 +65,13 @@ Sources:
 
 Copied, because a shipped playbook or `poteto-mode` reads them:
 
-`architect`, `arena`, `blast-radius`, `benchmark-checklist`, `create-verification-skill`, `figure-it-out`, `how`, `interrogate`, `maintain-verification-skill`, `no-comments`, `poteto-mode`, `setup-pstack`, `show-me-your-work`, `swarm`, `tdd`, `technical-writing`, `typescript-best-practices`, `unslop`, `why`, and every `principle-*` skill.
+`architect`, `arena`, `blast-radius`, `benchmark-checklist`, `create-verification-skill`, `figure-it-out`, `how`, `in-your-own-words`, `interrogate`, `maintain-verification-skill`, `no-comments`, `poteto-mode`, `setup-pstack`, `show-me-your-work`, `swarm`, `tdd`, `technical-writing`, `typescript-best-practices`, `unslop`, `why`, and every `principle-*` skill.
 
 `setup-pstack` is rewritten for Gemini CLI paths and aliases. `poteto-mode` keeps the upstream rules and replaces the playbook index with the five files this port ships. `playbooks/verification.md` is new.
 
 Not copied:
 
-`automate-me`, `bro`, `correct`, `create-formal-verification-skill`, `in-your-own-words`, `ketchup`, `ketchup-video`, `maintain-formal-verification-skill`, `make-bot-ui`, `poteto-help`, `recall`, `reflect`, `sharpen`, `statechart`, `teach`.
+`automate-me`, `bro`, `correct`, `create-formal-verification-skill`, `ketchup`, `ketchup-video`, `maintain-formal-verification-skill`, `make-bot-ui`, `poteto-help`, `recall`, `reflect`, `sharpen`, `statechart`, `teach`.
 
 ## Adapter shape
 
