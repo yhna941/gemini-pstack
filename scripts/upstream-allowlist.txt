@@ -1,0 +1,4 @@
+skills/poteto-mode/SKILL.md
+skills/setup-pstack/SKILL.md
+skills/poteto-mode/playbooks/verification.md
+agents/poteto-agent.md
