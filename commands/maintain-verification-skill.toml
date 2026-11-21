@@ -1,6 +1,6 @@
 description = "Run the maintain-verification-skill skill."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the maintain-verification-skill skill and follow it. The task is below. If it is empty, ask what to do.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Call activate_skill for maintain-verification-skill when that tool is available. Do not read_file the skill path. If pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. The task is below. If it is empty, ask what to do.
 
 {{args}}
 """

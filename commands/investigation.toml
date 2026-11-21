@@ -1,6 +1,6 @@
 description = "Run the investigation playbook. Read only, no edits."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill. Follow the playbook text below. Do not read_file it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path. Follow the playbook text below. Do not read_file it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
 
 <!-- playbook-inline -->
 ### Investigation
@@ -18,6 +18,8 @@ No PR, no babysit, no `architect` unless the investigation precedes a code chang
 
 **Reply:** the investigation output. For "are we sure?" answers, include your real judgment with reasons. Push back if the premise is wrong (see Autonomy).
 
+
+If pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit.
 
 {{args}}
 """
