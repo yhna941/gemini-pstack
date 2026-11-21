@@ -291,6 +291,31 @@ function checkWriter() {
   if (!liteMd.includes('swarm workers: gemini-3.5-flash-lite')) {
     fail('lite roles should use the free-tier model');
   }
+  if (!liteSettings.skills.disabled.includes('architect')) fail('lite should hide nonessential skills');
+  if (liteSettings.skills.disabled.includes('poteto-mode')) fail('lite should keep poteto-mode');
+  if (!liteSettings.tools.core.includes('read_file') || liteSettings.tools.core.includes('ask_user')) {
+    fail('lite tools.core should be the coding allowlist');
+  }
+  if (liteSettings.general.maxAttempts !== 2) fail('lite should cap model attempts');
+  if (liteSettings.general.plan.modelRouting !== false) fail('lite should not route to pro');
+  const liteAgain = runWriter(liteHome, 'lite');
+  if (liteAgain.status !== 0) fail(`writer lite rerun failed: ${liteAgain.stderr}`);
+  const liteAgainSettings = JSON.parse(
+    fs.readFileSync(path.join(liteHome, '.gemini/settings.json'), 'utf8'),
+  );
+  if (JSON.stringify(liteAgainSettings) !== JSON.stringify(liteSettings)) {
+    fail('lite settings changed on a second run');
+  }
+  const restored = runWriter(liteHome, 'large');
+  if (restored.status !== 0) fail(`writer restore failed: ${restored.stderr}`);
+  const restoredSettings = JSON.parse(
+    fs.readFileSync(path.join(liteHome, '.gemini/settings.json'), 'utf8'),
+  );
+  if (restoredSettings.pstack.lite !== false) fail('large should clear lite');
+  if (restoredSettings.skills?.disabled?.includes('architect')) {
+    fail('leaving lite should restore the skill catalog');
+  }
+  if (restoredSettings.tools) fail('leaving lite should restore the previous tool list');
 
   const brokenHome = fs.mkdtempSync(path.join(os.tmpdir(), 'pstack-models-'));
   const brokenDir = path.join(brokenHome, '.gemini');

@@ -1,6 +1,6 @@
 description = "Run the feature playbook from a named data shape."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill. Follow the playbook text below. Do not read_file it. The change is below. If it is empty, ask what to build.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path. Follow the playbook text below. Do not read_file it. The change is below. If it is empty, ask what to build.
 
 <!-- playbook-inline -->
 ### Feature
@@ -25,6 +25,8 @@ Code-coupled work (one feature, one migration) goes to a single owner with the c
 
 **Reply:** what you built, what you chose and why, the throughput checkpoint, open decisions. Tables for design alternatives.
 
+
+If pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit.
 
 {{args}}
 """

@@ -1,6 +1,12 @@
 description = "Run poteto-mode on the task typed after the command."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill and follow it for the task below. If the task is empty, ask what to do.
+Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path. Follow the injected body.
+
+If pstack lite is on (the session says LITE MODE, settings pstack.lite is true, or this task follows /setup-pstack lite), do the work in this chat. Do not spawn poteto-agent or any other subagent. Do not run scripts/delegate.mjs. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. Prove the result by running that test or the real command.
+
+If pstack lite is off, follow the injected poteto-mode skill, including its subagent rules.
+
+The task is below. If it is empty, ask what to do.
 
 {{args}}
 """

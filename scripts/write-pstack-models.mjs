@@ -2,9 +2,35 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const BUDGETS = new Set(['large', 'medium', 'small', 'lite']);
 const LITE_MODEL = 'gemini-3.5-flash-lite';
+export const LITE_SKILLS = [
+  'poteto-mode',
+  'tdd',
+  'principle-prove-it-works',
+  'setup-pstack',
+];
+export const LITE_TOOLS = [
+  'read_file',
+  'read_many_files',
+  'glob',
+  'grep_search',
+  'list_directory',
+  'write_file',
+  'replace',
+  'run_shell_command',
+  'activate_skill',
+];
+
+function skillNames() {
+  const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'skills');
+  return fs
+    .readdirSync(dir)
+    .filter((name) => fs.existsSync(path.join(dir, name, 'SKILL.md')))
+    .sort();
+}
 const LADDER = ['pro', 'flash', 'flash-lite'];
 const STEPS = { large: 0, medium: 1, small: 2 };
 const PARENT = { large: 'pro', medium: 'flash', small: 'flash-lite' };
@@ -128,6 +154,52 @@ function loadSettings(file) {
   return objectOrEmpty(parsed, file);
 }
 
+function applyLite(settings) {
+  if (!settings.pstack.liteBackup) {
+    settings.pstack.liteBackup = {
+      skillsDisabled: Array.isArray(settings.skills?.disabled) ? [...settings.skills.disabled] : [],
+      tools: settings.tools === undefined ? null : structuredClone(settings.tools),
+      maxAttempts: settings.general?.maxAttempts ?? null,
+      modelRouting: settings.general?.plan?.modelRouting ?? null,
+      modelName: settings.model?.name ?? null,
+    };
+  }
+  const skills = objectOrEmpty(settings.skills, 'skills');
+  const keep = new Set(LITE_SKILLS);
+  skills.disabled = skillNames().filter((name) => !keep.has(name));
+  settings.skills = skills;
+  const tools = objectOrEmpty(settings.tools, 'tools');
+  tools.core = [...LITE_TOOLS];
+  settings.tools = tools;
+  const general = objectOrEmpty(settings.general, 'general');
+  general.maxAttempts = 2;
+  const plan = objectOrEmpty(general.plan, 'general.plan');
+  plan.modelRouting = false;
+  general.plan = plan;
+  settings.general = general;
+}
+
+function revertLite(settings) {
+  const backup = settings.pstack.liteBackup;
+  if (!backup) return;
+  const skills = objectOrEmpty(settings.skills, 'skills');
+  skills.disabled = backup.skillsDisabled;
+  settings.skills = skills;
+  if (backup.tools === null) delete settings.tools;
+  else settings.tools = backup.tools;
+  const general = objectOrEmpty(settings.general, 'general');
+  if (backup.maxAttempts === null) delete general.maxAttempts;
+  else general.maxAttempts = backup.maxAttempts;
+  const plan = objectOrEmpty(general.plan, 'general.plan');
+  if (backup.modelRouting === null) delete plan.modelRouting;
+  else plan.modelRouting = backup.modelRouting;
+  general.plan = plan;
+  settings.general = general;
+  if (backup.modelName === null) delete settings.model.name;
+  else settings.model.name = backup.modelName;
+  delete settings.pstack.liteBackup;
+}
+
 function writeAll(home, budget) {
   const geminiDir = path.join(home, '.gemini');
   const geminiMd = path.join(geminiDir, 'GEMINI.md');
@@ -135,8 +207,11 @@ function writeAll(home, budget) {
   const settings = loadSettings(settingsPath);
   const model = objectOrEmpty(settings.model, `${settingsPath} model`);
   const pstack = objectOrEmpty(settings.pstack, `${settingsPath} pstack`);
-  pstack.lite = budget === 'lite';
   settings.pstack = pstack;
+  settings.model = model;
+  if (budget === 'lite') applyLite(settings);
+  else revertLite(settings);
+  pstack.lite = budget === 'lite';
   if (budget === 'lite') model.name = LITE_MODEL;
   else if (model.name === undefined) model.name = PARENT[budget];
   const agents = objectOrEmpty(settings.agents, `${settingsPath} agents`);
@@ -156,7 +231,6 @@ function writeAll(home, budget) {
   previous.modelConfig = modelConfig;
   overrides['poteto-agent'] = previous;
   agents.overrides = overrides;
-  settings.model = model;
   settings.agents = agents;
 
   fs.mkdirSync(geminiDir, { recursive: true });
@@ -196,4 +270,6 @@ function main() {
   }
 }
 
-main();
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
+  main();
+}

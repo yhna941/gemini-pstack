@@ -42,16 +42,19 @@ Headless scripts (`scripts/panel.mjs`, `scripts/delegate.mjs`, `scripts/loop.mjs
 
 `/setup-pstack lite` writes `model.name` as `gemini-3.5-flash-lite` and `pstack.lite: true`. `PSTACK_LITE=1` does the same for the hook without rewriting settings. Lite injects a short adapter, tells the chat to do the work itself, and still requires a failing test first, a rerun, and a commit.
 
-`node scripts/context-size.mjs` estimates tokens as characters divided by 4. On this tree the always-loaded extension text is:
+`/setup-pstack lite` also writes `skills.disabled` for every skill except `poteto-mode`, `tdd`, `principle-prove-it-works`, and `setup-pstack`, sets `tools.core` to the coding allowlist (`read_file`, `read_many_files`, `glob`, `grep_search`, `list_directory`, `write_file`, `replace`, `run_shell_command`, `activate_skill`), sets `general.maxAttempts` to 2, and turns off `general.plan.modelRouting` so the CLI does not switch to a Pro model. Switching to `large`, `medium`, or `small` restores the previous skill list, tool list, attempt cap, and model routing. Gemini CLI has no tokens-per-minute throttle. The attempt cap is the burst control it does have.
+
+`node scripts/context-size.mjs` estimates tokens as characters divided by 4. No API key was available, so this is not a live `usageMetadata` count. Tool docs from `@google/gemini-cli` 0.70.0 stand in for tool-schema size. On this tree:
 
 | Piece | Full | Lite |
 | --- | --- | --- |
 | `GEMINI.md` | 108 | 108 |
-| Skill name and description catalog | 3281 | 3281 |
+| Skill name and description catalog | 3281 | 226 |
 | SessionStart hook context | 1718 | 195 |
-| Total | 5107 | 3584 |
+| Tool docs proxy | 18903 | 3683 |
+| Total | 24010 | 4212 |
 
-Gemini CLI still sends the skill catalog and its tool schemas on every request. Lite does not put skill bodies in that prefix. The catalog is the part this extension cannot turn off. The hook saving is 1718 to 195 estimated tokens on every later turn, because SessionStart stays in the history.
+Disabled skills are omitted from the prompt (`getSkills` skips `skill.disabled`). `tools.core` is an allowlist, so tools that are not listed are not enabled. The wire schema is smaller than the docs proxy. The direction of the cut is what this table shows.
 
 Check the manifest without an API key:
 

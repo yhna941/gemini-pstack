@@ -50,6 +50,21 @@ function rewritePrompt(text) {
     /Activate poteto-mode and read references\/bugbot-triage\.md from that skill directory\./g,
     'The review script inlines the triage rubric. Do not read_file it.',
   );
+  if (next.includes('poteto-mode') && !next.includes('activate_skill')) {
+    next = next.replace(
+      'Activate the poteto-mode skill',
+      'Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path',
+    );
+  }
+  if (
+    (next.includes('poteto-mode') || next.includes('Activate the ')) &&
+    !next.includes('If pstack lite is on')
+  ) {
+    next = next.replace(
+      '\n{{args}}\n',
+      '\nIf pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit.\n\n{{args}}\n',
+    );
+  }
   return next;
 }
 
@@ -57,7 +72,7 @@ for (const name of fs.readdirSync(path.join(root, 'skills'))) {
   writeCommand(
     path.join(commandsDir, `${name}.toml`),
     `Run the ${name} skill.`,
-    `${preamble} Activate the ${name} skill and follow it. The task is below. If it is empty, ask what to do.`,
+    `${preamble} Call activate_skill for ${name} when that tool is available. Do not read_file the skill path. If pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. The task is below. If it is empty, ask what to do.`,
   );
 }
 
@@ -67,7 +82,7 @@ for (const file of fs.readdirSync(path.join(root, 'skills/poteto-mode/playbooks'
   writeCommand(
     path.join(commandsDir, `${stem}.toml`),
     `Run the ${stem} playbook.`,
-    `${preamble} Activate the poteto-mode skill. Follow the playbook text below. Do not read_file it.\n\n<!-- playbook-inline -->\n${fs.readFileSync(path.join(root, 'skills/poteto-mode/playbooks', file), 'utf8')}\n\nThe task is below. If it is empty, ask what to do.`,
+    `${preamble} Call activate_skill for poteto-mode when that tool is available. Do not read_file the skill path. If pstack lite is on, do the work in this chat and do not spawn subagents. For a bug fix or a feature, write a failing test first, run it, then the change, run the tests again, and commit. Follow the playbook text below. Do not read_file it.\n\n<!-- playbook-inline -->\n${fs.readFileSync(path.join(root, 'skills/poteto-mode/playbooks', file), 'utf8')}\n\nThe task is below. If it is empty, ask what to do.`,
   );
 }
 
