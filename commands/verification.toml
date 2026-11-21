@@ -1,0 +1,6 @@
+description = "Run the verification playbook and prove the change."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/verification.md, and follow it. What to prove is below. If it is empty, ask what to prove.
+
+{{args}}
+"""

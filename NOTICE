@@ -1,0 +1,19 @@
+pstack
+Copyright (c) 2026 Lauren Tan
+
+Upstream source: https://github.com/cursor/plugins/tree/main/pstack
+Upstream version copied for this port: 0.15.46
+License: MIT (see LICENSE)
+
+This repository is a Gemini CLI port of that project.
+The port-specific files are the extension manifest, `GEMINI.md`,
+`docs/harness/gemini-cli.md`, `docs/PORTING.md`, the command files,
+`scripts/write-pstack-models.mjs`, `scripts/validate-extension.mjs`,
+`skills/setup-pstack/SKILL.md`, `skills/poteto-mode/playbooks/verification.md`,
+and `agents/poteto-agent.md`.
+Those files are Copyright (c) 2026 yhna941, also under the MIT license.
+
+The other skill files, playbooks, and `agents/comment-sicko.md` are copied
+from upstream and remain Copyright (c) 2026 Lauren Tan.
+`skills/poteto-mode/SKILL.md` is the upstream skill with a Gemini CLI
+playbook list added.

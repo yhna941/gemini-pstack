@@ -1,0 +1,6 @@
+description = "Run the investigation playbook. Read only, no edits."
+prompt = """
+Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/investigation.md, and follow it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
+
+{{args}}
+"""
