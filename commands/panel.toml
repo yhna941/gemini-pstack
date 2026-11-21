@@ -1,6 +1,6 @@
 description = "Run a sequential pro then flash review pass."
 prompt = """
-Read docs/harness/gemini-cli.md once this session. Run node scripts/panel.mjs --dry-run -- and then, when GEMINI_API_KEY is set, run it without --dry-run. The prompt is below. Say that both passes are Gemini models.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Run node <extension root>/scripts/panel.mjs --dry-run -- and then, when GEMINI_API_KEY is set, run it without --dry-run. The prompt is below. Say that both passes are Gemini models.
 
 {{args}}
 """

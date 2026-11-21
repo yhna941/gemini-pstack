@@ -1,6 +1,6 @@
 description = "Run the bug-fix playbook. Reproduce, then fix."
 prompt = """
-Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/bug-fix.md, and follow it. The defect is below. If it is empty, ask which defect to fix.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill, read playbooks/bug-fix.md from the activated poteto-mode skill directory, and follow it. The defect is below. If it is empty, ask which defect to fix.
 
 {{args}}
 """

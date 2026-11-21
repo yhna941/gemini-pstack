@@ -1,6 +1,6 @@
 # pstack in Gemini CLI
 
-pstack skills use Cursor names. In Gemini CLI, read this file once per session, then map each Cursor name with the tables below. `<pstack>` means the extension root, the directory that holds `gemini-extension.json`, `skills/`, and `docs/`. If a Cursor field has no row, drop it and say so. Never pass a field or value the tool schema rejects.
+pstack skills use Cursor names. The SessionStart hook injects this file into the session, so map each Cursor name with the tables below. A workspace-relative read of this path fails from another project. `<pstack>` means the extension root, the directory that holds `gemini-extension.json`, `skills/`, and `docs/`. If a Cursor field has no row, drop it and say so. Never pass a field or value the tool schema rejects.
 
 When a step needs a product Gemini CLI does not have, write one line and continue. The line is `Skipped in Gemini CLI: <step>. <reason>.` Do not stop, ask, or retry. When a later step needs what the skipped step made, leave a placeholder and name it in the line.
 

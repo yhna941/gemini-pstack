@@ -1,6 +1,6 @@
 description = "Run the hillclimb playbook."
 prompt = """
-Read docs/harness/gemini-cli.md from the pstack extension once this session. The adapter wins when a Cursor name and a Gemini name differ. Activate the poteto-mode skill. Open skills/poteto-mode/playbooks/hillclimb.md and follow it. The task is below. If it is empty, ask what to do.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill. Read playbooks/hillclimb.md from the activated poteto-mode skill directory and follow it. The task is below. If it is empty, ask what to do.
 
 {{args}}
 """

@@ -1,6 +1,6 @@
 description = "Ask one question in the reply. Gemini CLI has no question widget."
 prompt = """
-Read docs/harness/gemini-cli.md once this session. There is no AskQuestion tool. Ask the question below in the reply, with the options on their own lines. If the question is empty, ask what to ask.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. There is no AskQuestion tool. Ask the question below in the reply, with the options on their own lines. If the question is empty, ask what to ask.
 
 {{args}}
 """

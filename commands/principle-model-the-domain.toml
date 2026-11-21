@@ -1,6 +1,6 @@
 description = "Run the principle-model-the-domain skill."
 prompt = """
-Read docs/harness/gemini-cli.md from the pstack extension once this session. The adapter wins when a Cursor name and a Gemini name differ. Activate the principle-model-the-domain skill and follow it. The task is below. If it is empty, ask what to do.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the principle-model-the-domain skill and follow it. The task is below. If it is empty, ask what to do.
 
 {{args}}
 """
