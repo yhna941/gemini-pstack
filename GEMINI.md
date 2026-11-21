@@ -2,7 +2,7 @@
 
 This extension is a Gemini CLI port of Lauren Tan's pstack. The upstream project is https://github.com/cursor/plugins/tree/main/pstack and it is MIT licensed.
 
-Read `docs/harness/gemini-cli.md` once per session before you follow any skill in `skills/`. That adapter wins when a Cursor name and a Gemini name differ.
+The SessionStart hook injects the adapter text from `docs/harness/gemini-cli.md` and the absolute extension root. Follow that injected text. Do not read a workspace-relative `docs/harness/gemini-cli.md`. That file is outside the project, so `read_file` fails unless the user started Gemini with `--include-directories` set to the extension root.
 
 `/setup-pstack` writes model choices into `~/.gemini/GEMINI.md` and `~/.gemini/settings.json`. Those files override the defaults named in the adapter.
 

@@ -1,6 +1,6 @@
 description = "Run the investigation playbook. Read only, no edits."
 prompt = """
-Read docs/harness/gemini-cli.md from the pstack extension once this session. Activate the poteto-mode skill, open skills/poteto-mode/playbooks/investigation.md, and follow it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill, read playbooks/investigation.md from the activated poteto-mode skill directory, and follow it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
 
 {{args}}
 """

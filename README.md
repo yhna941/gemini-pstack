@@ -28,6 +28,14 @@ To develop against a checkout without copying:
 gemini extensions link .
 ```
 
+The SessionStart hook injects the adapter text, so a normal project does not need an extra flag. If hooks are off, start Gemini with the extension root on the workspace list:
+
+```bash
+gemini --include-directories "$HOME/.gemini/extensions/pstack"
+```
+
+Headless scripts (`scripts/panel.mjs`, `scripts/delegate.mjs`, `scripts/loop.mjs`, `scripts/review-pr.mjs`) use `--model`, then `PSTACK_MODEL`, then `model.name` in `~/.gemini/settings.json`, then `pro`. `/setup-pstack` writes that settings key when it is absent.
+
 Check the manifest without an API key:
 
 ```bash

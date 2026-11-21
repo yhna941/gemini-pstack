@@ -1,6 +1,6 @@
 description = "Write pstack model choices into the Gemini CLI files it reads."
 prompt = """
-Read docs/harness/gemini-cli.md from the pstack extension once this session, then follow the setup-pstack skill. Run node on scripts/write-pstack-models.mjs in that extension. Pass --budget large, --budget medium, or --budget small when the words below name one of those budgets. With no budget, pass --budget large and say that you used the default. Do not edit ~/.gemini/GEMINI.md or ~/.gemini/settings.json by hand in this turn.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Then follow the setup-pstack skill. Run node on scripts/write-pstack-models.mjs in that extension. Pass --budget large, --budget medium, or --budget small when the words below name one of those budgets. With no budget, pass --budget large and say that you used the default. Do not edit ~/.gemini/GEMINI.md or ~/.gemini/settings.json by hand in this turn.
 
 {{args}}
 """

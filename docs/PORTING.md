@@ -46,7 +46,7 @@ Sources:
 | Pull request tool | Cursor or Origin PR tool | None built into the extension | degraded | `gh pr create` with no `--draft`. |
 | `/loop` | Cursor command the bug-fix playbook names | `scripts/loop.mjs` and `/loop` | degraded | It repeats `gemini -m pro -p`. It is not Cursor's `/loop` scheduler. |
 | cursor-team-kit | `/deslop`, `control-ui`, `control-cli` | Not part of pstack or this port | unsupported | Skip the step. |
-| Custom mode lock | Option-enter keeps `/poteto-mode` pinned | `BeforeAgent` hook plus `GEMINI.md` | degraded | The hook adds adapter context every turn. It does not pin a mode the way Option-enter does. |
+| Custom mode lock | Option-enter keeps `/poteto-mode` pinned | `SessionStart` injects the adapter text, and `BeforeAgent` repeats the absolute paths | degraded | The hook does not pin a mode the way Option-enter does. `read_file` still cannot see the extension from another project unless you pass `--include-directories`. |
 | Worktree scripts | `skills/poteto-mode/scripts/` | Copied, including `watch-pr` | supported | Run them with `node` or the bundled `watch-pr` entry. |
 | Guide | `docs/guide/` | Copied, with images | supported | `scripts/sync-upstream.mjs` diffs it against upstream. Cursor-only steps in the guide still follow the adapter. |
 
