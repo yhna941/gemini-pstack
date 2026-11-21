@@ -107,12 +107,6 @@ Write short declarative sentences with no long dash and no colon as a connector.
 
 ## Playbooks
 
-Match the task to a playbook and open its steps at `playbooks/<title>.md`, with the title in kebab case. Copy its steps into the todolist tool first. This Gemini CLI port ships the playbooks below.
+Match the task to a playbook and open its steps at `playbooks/<title>.md`, with the title in kebab case. Copy its steps into the todolist tool first. Large, cross-cutting, or unattended work, or a task no playbook fits, routes to the **figure-it-out** skill.
 
-- `investigation` for a read-only question.
-- `bug-fix` for a defect to reproduce and fix.
-- `feature` for new or changed behavior. Verification is a step inside this playbook, not a separate playbook, when the user also asked you to build the change.
-- `verification` when the user asked you to prove a change and not to build one.
-- `opening-a-pr` at the end of feature and bug-fix.
-
-A task that matches an unported playbook stops with one line, `Skipped in Gemini CLI: <playbook>. Not in this port.` Do not invent the missing file. Large, cross-cutting, or unattended work that fits none of the shipped playbooks routes to the **figure-it-out** skill.
+Investigation, Bug fix, Perf issue, Hillclimb, Runtime forensics, Trace forensics, Feature, Refactoring, Prototype, Visual parity, Authoring a skill, Eval, Babysit, Shipping, Autonomous run, Autopilot-full, Autopilot-stack, Session pickup, Pause safely, Multi-phase plan, Worktree cleanup, Opening a PR.
