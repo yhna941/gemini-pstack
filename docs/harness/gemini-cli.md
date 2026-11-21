@@ -27,7 +27,7 @@ When a step needs a product Gemini CLI does not have, write one line and continu
 | `run_in_background` | Omit. |
 | `resume` | Start a new subagent and paste the earlier result into its brief. |
 | `environment: "cloud"` | A local git worktree. Name the branch the worker checks out. |
-| A nested spawn, from inside a subagent | Do the work yourself. Subagents cannot call other subagents. Write the skip line. |
+| A nested spawn, from inside a subagent | Subagents cannot call other subagents. Run `node <pstack>/scripts/delegate.mjs --dry-run -- <prompt>`, then without `--dry-run` when `GEMINI_API_KEY` is set. Say that this is a new process. |
 
 Subagents are a preview feature. The main agent may spawn them. A subagent may not spawn them.
 
@@ -44,7 +44,7 @@ Gemini CLI runs Gemini models only. There is one vendor.
 | `~/.cursor/rules/pstack-models.mdc` | The block in `~/.gemini/GEMINI.md` between `<!-- pstack-models:start -->` and `<!-- pstack-models:end -->`. Gemini CLI loads that file into every new session. If the block or the role line is missing, use the default in the Models table. |
 | `agents.overrides.poteto-agent.modelConfig.model` in `~/.gemini/settings.json` | The model the `poteto-agent` subagent runs. `/setup-pstack` writes it from the `feature, refactoring` role. |
 | `model.name` in `~/.gemini/settings.json` | The parent session model. `/setup-pstack` sets it only when the key is absent. |
-| A panel of three vendors | Run the `pro` seat. If the role line lists a second alias, run that pass after the first. Say the panel is single-vendor. Skip the cross-vendor judge. |
+| A panel of three vendors | Run `node <pstack>/scripts/panel.mjs`. It plans `pro`, then `flash`. Both are Gemini. Say the panel is single-vendor. There is no Claude or Fable seat. |
 
 The aliases are the ones `packages/core/src/config/models.ts` resolves in gemini-cli commit `eecccfcd5aff25de5e78135ca20f7abe3f566955`. `pro`, `flash`, `flash-lite`, and `auto` are the values to write. Write a concrete `gemini-*` id only when the user typed it or it appeared in `/model` output this session.
 
@@ -65,12 +65,12 @@ Follow `skills/setup-pstack/SKILL.md`. The script `scripts/write-pstack-models.m
 
 | Cursor | Gemini CLI |
 | --- | --- |
-| Cursor Automations, routines, and webhooks | Skip with the line. |
-| Bugbot, starting it, waiting for it, or configuring it | Skip with the line. Review comments that are already on the PR are ordinary threads. Classify them with `<pstack>/skills/poteto-mode/references/bugbot-triage.md`. |
-| Cursor cloud agents and the cloud dashboard | Skip with the line. A cloud environment field maps to a local git worktree. |
+| Cursor Automations, routines, and webhooks | The Benny files are in `automations/benny`. `.github/workflows/benny.yml` runs `scripts/delegate.mjs` on `workflow_dispatch`. There is no Slack wake and no Cursor Automations API. |
+| Bugbot, starting it, waiting for it, or configuring it | Do not start Cursor Bugbot. Classify comments with `<pstack>/skills/poteto-mode/references/bugbot-triage.md`. `.github/workflows/review.yml` runs `scripts/review-pr.mjs` with Gemini when `GEMINI_API_KEY` is set. |
+| Cursor cloud agents and the cloud dashboard | Skip the dashboard. A cloud environment field maps to a local git worktree plus `scripts/delegate.mjs`. |
 | A built-in PR tool | Use `gh pr create` with no `--draft`. That is not a skip. |
 | `/deslop`, `control-ui`, and `control-cli` from cursor-team-kit | Skip with the line. Those skills are not in this extension. |
-| `/loop` | Skip with the line. |
+| `/loop` | `node <pstack>/scripts/loop.mjs --times 2`. It repeats `gemini -m pro -p`. |
 | `disable-model-invocation` | Gemini CLI ignores this field. The skill `description` is what decides activation. |
 | A playbook file that is not in `skills/poteto-mode/playbooks/` | Skip with the line. Do not invent the file. |
 

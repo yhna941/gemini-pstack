@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${extensionPath}/scripts/pstack-hook.mjs",
+            "name": "pstack-session",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${extensionPath}/scripts/pstack-hook.mjs",
+            "name": "pstack-before-agent",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}

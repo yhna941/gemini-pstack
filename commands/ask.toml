@@ -1,0 +1,6 @@
+description = "Ask one question in the reply. Gemini CLI has no question widget."
+prompt = """
+Read docs/harness/gemini-cli.md once this session. There is no AskQuestion tool. Ask the question below in the reply, with the options on their own lines. If the question is empty, ask what to ask.
+
+{{args}}
+"""

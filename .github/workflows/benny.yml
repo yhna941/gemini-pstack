@@ -1,0 +1,22 @@
+name: benny
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: Task for the copied Benny procedure
+        required: true
+        type: string
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @google/gemini-cli@0.70.0
+      - run: node scripts/delegate.mjs --model pro -- "${{ inputs.prompt }}"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

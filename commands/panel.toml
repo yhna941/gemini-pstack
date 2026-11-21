@@ -1,0 +1,6 @@
+description = "Run a sequential pro then flash review pass."
+prompt = """
+Read docs/harness/gemini-cli.md once this session. Run node scripts/panel.mjs --dry-run -- and then, when GEMINI_API_KEY is set, run it without --dry-run. The prompt is below. Say that both passes are Gemini models.
+
+{{args}}
+"""
