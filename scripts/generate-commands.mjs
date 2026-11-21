@@ -39,8 +39,16 @@ function rewritePrompt(text) {
   let next = text;
   for (const [from, to] of replacements) next = next.replaceAll(from, to);
   next = next.replace(
-    /[Oo]pen skills\/poteto-mode\/playbooks\/([a-z0-9.-]+\.md)/g,
-    'read playbooks/$1 from the activated poteto-mode skill directory',
+    /[Rr]ead playbooks\/[a-z0-9.-]+\.md from the activated poteto-mode skill directory,? and follow it\./g,
+    'Follow the playbook text below. Do not read_file it.',
+  );
+  next = next.replace(
+    /[Oo]pen skills\/poteto-mode\/playbooks\/[a-z0-9.-]+\.md/g,
+    'follow the inlined playbook. Do not read_file it',
+  );
+  next = next.replace(
+    /Activate poteto-mode and read references\/bugbot-triage\.md from that skill directory\./g,
+    'The review script inlines the triage rubric. Do not read_file it.',
   );
   return next;
 }
@@ -59,7 +67,7 @@ for (const file of fs.readdirSync(path.join(root, 'skills/poteto-mode/playbooks'
   writeCommand(
     path.join(commandsDir, `${stem}.toml`),
     `Run the ${stem} playbook.`,
-    `${preamble} Activate the poteto-mode skill. Read playbooks/${file} from the activated poteto-mode skill directory and follow it. The task is below. If it is empty, ask what to do.`,
+    `${preamble} Activate the poteto-mode skill. Follow the playbook text below. Do not read_file it.\n\n<!-- playbook-inline -->\n${fs.readFileSync(path.join(root, 'skills/poteto-mode/playbooks', file), 'utf8')}\n\nThe task is below. If it is empty, ask what to do.`,
   );
 }
 
@@ -67,7 +75,16 @@ for (const file of fs.readdirSync(commandsDir)) {
   if (!file.endsWith('.toml')) continue;
   const full = path.join(commandsDir, file);
   const current = fs.readFileSync(full, 'utf8');
-  const rewritten = rewritePrompt(current);
+  let rewritten = rewritePrompt(current);
+  const stem = file.slice(0, -5);
+  const play = path.join(root, 'skills/poteto-mode/playbooks', `${stem}.md`);
+  if (fs.existsSync(play) && !rewritten.includes('<!-- playbook-inline -->')) {
+    const body = fs.readFileSync(play, 'utf8');
+    rewritten = rewritten.replace(
+      '\n{{args}}\n',
+      `\n<!-- playbook-inline -->\n${body}\n\n{{args}}\n`,
+    );
+  }
   if (rewritten !== current) fs.writeFileSync(full, rewritten);
 }
 

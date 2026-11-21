@@ -120,7 +120,14 @@ function checkCommands() {
   }
   for (const name of files) {
     if (!/^[a-z0-9-]+\.toml$/.test(name)) fail(`command file name ${name} is not a slash-command slug`);
-    parseCommandToml(read(path.join('commands', name)), `commands/${name}`);
+    const text = read(path.join('commands', name));
+    parseCommandToml(text, `commands/${name}`);
+    if (text.includes('from the activated poteto-mode skill directory')) {
+      fail(`${name} still tells the model to read a playbook path`);
+    }
+    if (text.includes('skills/poteto-mode/references/')) {
+      fail(`${name} still names an extension reference path`);
+    }
   }
 }
 
@@ -270,6 +277,19 @@ function checkWriter() {
   if (merged.ui.theme !== 'dark') fail('writer dropped unrelated settings');
   if (merged.agents.overrides['poteto-agent'].modelConfig.model !== 'flash') {
     fail('medium poteto-agent model should be flash');
+  }
+
+  const liteHome = fs.mkdtempSync(path.join(os.tmpdir(), 'pstack-models-'));
+  const lite = runWriter(liteHome, 'lite');
+  if (lite.status !== 0) fail(`writer lite failed: ${lite.stderr}`);
+  const liteSettings = JSON.parse(
+    fs.readFileSync(path.join(liteHome, '.gemini/settings.json'), 'utf8'),
+  );
+  const liteMd = fs.readFileSync(path.join(liteHome, '.gemini/GEMINI.md'), 'utf8');
+  if (liteSettings.model.name !== 'gemini-3.5-flash-lite') fail('lite should set model.name');
+  if (liteSettings.pstack.lite !== true) fail('lite should set pstack.lite');
+  if (!liteMd.includes('swarm workers: gemini-3.5-flash-lite')) {
+    fail('lite roles should use the free-tier model');
   }
 
   const brokenHome = fs.mkdtempSync(path.join(os.tmpdir(), 'pstack-models-'));

@@ -1,6 +1,23 @@
 description = "Run the investigation playbook. Read only, no edits."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill, read playbooks/investigation.md from the activated poteto-mode skill directory, and follow it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate the poteto-mode skill. Follow the playbook text below. Do not read_file it. Do not edit the repo. The question is below. If it is empty, ask what to investigate.
+
+<!-- playbook-inline -->
+### Investigation
+
+**You own the answer. Plan, route, write.**
+
+Investigation requests are read-only. They produce a cited explanation or a recommendation, not a code change.
+
+1. Trace the code the question is about. For motivation questions, also route through the **why** skill.
+2. Throughput checkpoint stays one line: `throughput checkpoint: n/a, read-only investigation`.
+3. Produce the output (Overview / Key Concepts / How It Works / Where Things Live / Gotchas), or a recommendation with a tradeoffs table if the request is a decision between alternatives.
+4. Apply the **unslop** skill to the reply.
+
+No PR, no babysit, no `architect` unless the investigation precedes a code change. If it does, hand back to the user and re-route to Bug fix or Feature.
+
+**Reply:** the investigation output. For "are we sure?" answers, include your real judgment with reasons. Push back if the premise is wrong (see Autonomy).
+
 
 {{args}}
 """

@@ -1,9 +1,7 @@
 # pstack
 
-This extension is a Gemini CLI port of Lauren Tan's pstack. The upstream project is https://github.com/cursor/plugins/tree/main/pstack and it is MIT licensed.
+Gemini CLI port of Lauren Tan's pstack (MIT). Upstream: https://github.com/cursor/plugins/tree/main/pstack
 
-The SessionStart hook injects the adapter text from `docs/harness/gemini-cli.md` and the absolute extension root. Follow that injected text. Do not read a workspace-relative `docs/harness/gemini-cli.md`. That file is outside the project, so `read_file` fails unless the user started Gemini with `--include-directories` set to the extension root.
+SessionStart injects the adapter. Do not read_file paths under the extension. Activate a skill by name.
 
-`/setup-pstack` writes model choices into `~/.gemini/GEMINI.md` and `~/.gemini/settings.json`. Those files override the defaults named in the adapter.
-
-The shipped commands are `/poteto-mode`, `/setup-pstack`, `/investigation`, `/bug-fix`, `/feature`, and `/verification`.
+`/setup-pstack lite` or `PSTACK_LITE=1` is the free-tier mode. It uses `gemini-3.5-flash-lite`, stays in one chat, and still requires a failing test first. Other budgets are `large`, `medium`, and `small`.

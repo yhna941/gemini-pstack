@@ -28,7 +28,8 @@ Sources:
 | Always-on context | Skill body plus rules | `GEMINI.md` via `contextFileName` | supported | The file stays short and points at the adapter. |
 | Slash commands | Skill invocation from `/` | `commands/<name>.toml` with a required `prompt` string | supported | `{{args}}` is the task text. |
 | Skills | `skills/<name>/SKILL.md` | Extension `skills/<name>/SKILL.md`, activated on demand | supported | Copied skills are listed below. |
-| `disable-model-invocation` | Cursor hides the skill until you invoke it | The loader ignores unknown frontmatter keys | unsupported | The `description` text is the only trigger. |
+| `disable-model-invocation` | Cursor hides the skill until you invoke it | The loader ignores unknown frontmatter keys | unsupported | The `description` text is the only trigger. Skill bodies stay on demand. The name and description catalog is still sent every turn. |
+| Free-tier lite mode | No Cursor equivalent | `/setup-pstack lite` and `PSTACK_LITE=1` | supported | One chat, `gemini-3.5-flash-lite`, compact hook context. Failing test, rerun, and commit stay mandatory. |
 | Subagents | `Task` with `subagent_type` | Extension `agents/*.md`, plus `scripts/delegate.mjs` | degraded | Subagents are preview and cannot call other subagents. Nested work is a separate `gemini -p` process. |
 | `poteto-agent` | Cursor agent file, model `claude-opus-5-5-xhigh-fast`, `is_background: true` | `agents/poteto-agent.md` | degraded | `is_background` is not in the strict schema, so it is dropped. `model` is omitted so `settings.json` can set it. |
 | `comment-sicko` | Cursor agent | `agents/comment-sicko.md`, copied | supported | `no-comments` calls this agent. |

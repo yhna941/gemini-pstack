@@ -34,7 +34,24 @@ The SessionStart hook injects the adapter text, so a normal project does not nee
 gemini --include-directories "$HOME/.gemini/extensions/pstack"
 ```
 
-Headless scripts (`scripts/panel.mjs`, `scripts/delegate.mjs`, `scripts/loop.mjs`, `scripts/review-pr.mjs`) use `--model`, then `PSTACK_MODEL`, then `model.name` in `~/.gemini/settings.json`, then `pro`. `/setup-pstack` writes that settings key when it is absent.
+Headless scripts (`scripts/panel.mjs`, `scripts/delegate.mjs`, `scripts/loop.mjs`, `scripts/review-pr.mjs`) use `--model`, then `PSTACK_MODEL`, then `model.name` in `~/.gemini/settings.json`, then `pro`. `/setup-pstack` writes that settings key when it is absent. `review-pr.mjs` inlines the triage rubric. It does not ask the model to read an extension path.
+
+## Free tier
+
+`gemini-3.5-flash-lite` on the free tier allows about 250000 input tokens per minute. A full pstack session resends the extension text on every turn, and `/poteto-mode` can spawn `poteto-agent`, so one feature run can spend many turns and hit that limit.
+
+`/setup-pstack lite` writes `model.name` as `gemini-3.5-flash-lite` and `pstack.lite: true`. `PSTACK_LITE=1` does the same for the hook without rewriting settings. Lite injects a short adapter, tells the chat to do the work itself, and still requires a failing test first, a rerun, and a commit.
+
+`node scripts/context-size.mjs` estimates tokens as characters divided by 4. On this tree the always-loaded extension text is:
+
+| Piece | Full | Lite |
+| --- | --- | --- |
+| `GEMINI.md` | 108 | 108 |
+| Skill name and description catalog | 3281 | 3281 |
+| SessionStart hook context | 1718 | 195 |
+| Total | 5107 | 3584 |
+
+Gemini CLI still sends the skill catalog and its tool schemas on every request. Lite does not put skill bodies in that prefix. The catalog is the part this extension cannot turn off. The hook saving is 1718 to 195 estimated tokens on every later turn, because SessionStart stays in the history.
 
 Check the manifest without an API key:
 

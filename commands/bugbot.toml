@@ -1,6 +1,6 @@
 description = "Review the current diff with the bugbot triage rubric."
 prompt = """
-The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. Activate poteto-mode and read references/bugbot-triage.md from that skill directory. Run node <extension root>/scripts/review-pr.mjs --dry-run, then run it without --dry-run when GEMINI_API_KEY is set. Extra notes are below.
+The SessionStart hook already injected the pstack adapter text and the absolute extension root. Follow that injected text. The adapter wins when a Cursor name and a Gemini name differ. Do not read a workspace-relative docs/harness/gemini-cli.md. Run scripts from <extension root>/scripts using that absolute path. The review script inlines the triage rubric. Do not read_file it. Run node <extension root>/scripts/review-pr.mjs --dry-run, then run it without --dry-run when GEMINI_API_KEY is set. Extra notes are below.
 
 {{args}}
 """
