@@ -68,13 +68,13 @@ Agents: `poteto-agent` and `comment-sicko`.
 
 ## What this port leaves out
 
-Gemini CLI cannot run a Claude or Fable model, so the three-vendor review panel is one `pro` pass.
+Gemini CLI cannot call Claude or Fable. `scripts/panel.mjs` runs `pro`, then `flash`.
 
-Subagents exist, and they cannot call other subagents. A nested spawn becomes work in the current agent plus a skip line.
+A subagent cannot call another subagent. `scripts/delegate.mjs` starts a new `gemini -p` process.
 
-Bugbot, Cursor Automations, cloud agents, `.mdc` rules, and `/loop` are not available. The adapter says to skip those steps.
+Cursor Bugbot, Slack wakes, and the Automations API are absent. `.github/workflows/review.yml` and `benny.yml` call Gemini when `GEMINI_API_KEY` is set. There is no question widget. `/ask` writes the question in the reply.
 
-`watch-pr` is copied under `skills/poteto-mode/scripts/`. The guide is still absent from this branch. Bugbot, Cursor Automations, and a real multi-vendor panel still need the equivalents in the follow-up PRs.
+The upstream guide is in [docs/guide](docs/guide). Commit identity and the upstream diff command are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

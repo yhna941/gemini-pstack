@@ -48,7 +48,7 @@ Sources:
 | cursor-team-kit | `/deslop`, `control-ui`, `control-cli` | Not part of pstack or this port | unsupported | Skip the step. |
 | Custom mode lock | Option-enter keeps `/poteto-mode` pinned | `BeforeAgent` hook plus `GEMINI.md` | degraded | The hook adds adapter context every turn. It does not pin a mode the way Option-enter does. |
 | Worktree scripts | `skills/poteto-mode/scripts/` | Copied, including `watch-pr` | supported | Run them with `node` or the bundled `watch-pr` entry. |
-| Guide | `docs/guide/` | Not copied | unsupported | README plus this file. |
+| Guide | `docs/guide/` | Copied, with images | supported | `scripts/sync-upstream.mjs` diffs it against upstream. Cursor-only steps in the guide still follow the adapter. |
 
 ## Still impossible
 
@@ -71,6 +71,10 @@ There is no structured question widget.
 
 Every upstream skill directory is copied. `setup-pstack` is rewritten for Gemini CLI paths and aliases. `poteto-mode` keeps the upstream rules and adds a Gemini CLI preamble. `playbooks/verification.md` is new. `scripts/generate-commands.mjs` writes a slash command for each skill and playbook.
 
+## Sync
+
+`node scripts/sync-upstream.mjs` clones `https://github.com/cursor/plugins` and compares `skills/` and `docs/guide/`. It fails when a file that exists on both sides differs and is not listed in `scripts/upstream-allowlist.txt`. `--strict` also fails when an upstream file is missing. `--self-test` checks the comparer without the network.
+
 ## Adapter shape
 
 Two shapes were possible.
@@ -81,6 +85,5 @@ The rejected shape was rewriting every skill so it speaks Gemini names only. Tha
 
 ## Next
 
-1. Land the guide and `scripts/sync-upstream.mjs`.
-2. Add a real second vendor only if Gemini CLI grows a way to call a non-Gemini model. Until then, do not pretend `flash` is another vendor.
-3. Re-check `TomlCommandDefSchema` and the local agent schema when `@google/gemini-cli` moves past 0.70.0. `scripts/validate-extension.mjs` encodes the checks this port depends on.
+1. Add a real second vendor only if Gemini CLI grows a way to call a non-Gemini model. Until then, do not pretend `flash` is another vendor.
+2. Re-check `TomlCommandDefSchema` and the local agent schema when `@google/gemini-cli` moves past 0.70.0. `scripts/validate-extension.mjs` encodes the checks this port depends on.
